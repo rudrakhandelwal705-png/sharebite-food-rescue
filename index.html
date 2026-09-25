@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShareBite - Surplus Food Sharing Platform</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              cream: '#FAF7F2',
+              card: '#FFFFFF',
+              charcoal: '#22282A',
+              muted: '#626E72',
+              green: '#2E7D32',
+              greenLight: '#E8F5E9',
+              greenHover: '#256729',
+              accent: '#4CAF50',
+              amber: '#D97706',
+              amberLight: '#FEF3C7',
+              border: '#EBE5DC'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #FAF7F2;
+      color: #22282A;
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #D8D1C5;
+      border-radius: 9999px;
+    }
+    .fade-enter {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-brand-cream text-brand-charcoal antialiased pb-20 md:pb-6">
+
+  <header class="sticky top-0 z-40 bg-brand-cream/90 backdrop-blur-md border-b border-brand-border px-4 py-3">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-2">
+      <!-- Logo & Brand -->
+      <button onclick="navigateTo('landing')" class="flex items-center gap-2.5 text-left group">
+        <div class="w-10 h-10 rounded-2xl bg-brand-green flex items-center justify-center text-white shadow-sm shadow-brand-green/20 text-xl font-bold">
+          🌱
+        </div>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight text-brand-charcoal flex items-center gap-1">
+            Share<span class="text-brand-green">Bite</span>
+          </span>
+          <span class="hidden sm:block text-[11px] font-medium text-brand-muted -mt-1">Surplus Food Rescue</span>
+        </div>
+      </button>
+
+      <!-- Desktop Navigation Tabs -->
+      <nav class="hidden md:flex items-center gap-1.5 bg-brand-border/40 p-1.5 rounded-2xl border border-brand-border/60">
+        <button onclick="navigateTo('landing')" data-nav="landing" class="nav-link px-3.5 py-1.5 rounded-xl text-xs font-semibold transition text-brand-charcoal hover:bg-white/80">Home</button>
+        <button onclick="navigateTo('donor')" data-nav="donor" class="nav-link px-3.5 py-1.5 rounded-xl text-xs font-semibold transition text-brand-charcoal hover:bg-white/80">Donor Hub</button>
+        <button onclick="navigateTo('receiver')" data-nav="receiver" class="nav-link px-3.5 py-1.5 rounded-xl text-xs font-semibold transition text-brand-charcoal hover:bg-white/80">Browse Surplus</button>
+        <button onclick="navigateTo('tracker')" data-nav="tracker" class="nav-link px-3.5 py-1.5 rounded-xl text-xs font-semibold transition text-brand-charcoal hover:bg-white/80">Live Tracker</button>
+        <button onclick="navigateTo('impact')" data-nav="impact" class="nav-link px-3.5 py-1.5 rounded-xl text-xs font-semibold transition text-brand-charcoal hover:bg-white/80">Impact</button>
+      </nav>
+
+      <!-- Primary Action & Persona Pill -->
+      <div class="flex items-center gap-2">
+        <button onclick="navigateTo('post')" class="bg-brand-green hover:bg-brand-greenHover text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-sm transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          <span class="hidden sm:inline">Post Surplus</span>
+          <span class="sm:hidden">Post</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Toast Container -->
+  <div id="toastContainer" class="fixed top-16 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6">
+
+    <!-- SCREEN 1: LANDING PAGE -->
+    <section id="screen-landing" class="screen-view fade-enter space-y-12">
+      <!-- Hero Banner -->
+      <div class="bg-white rounded-3xl p-6 sm:p-10 border border-brand-border shadow-sm flex flex-col lg:flex-row items-center justify-between gap-8">
+        <div class="max-w-xl space-y-4 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-greenLight text-brand-green text-xs font-bold tracking-wide">
+            <span>✨</span> Community Food Rescue Network
+          </div>
+          <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-brand-charcoal leading-tight">
+            Good food deserves a <span class="text-brand-green underline decoration-brand-accent/40 decoration-wavy">good home</span>.
+          </h1>
+          <p class="text-sm sm:text-base text-brand-muted leading-relaxed">
+            Share surplus food with nearby communities before it goes to waste. We link neighborhood bakeries, grocers, and kitchens with local shelters and soup kitchens in real time.
+          </p>
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+            <button onclick="navigateTo('post')" class="bg-brand-green hover:bg-brand-greenHover text-white px-6 py-3.5 rounded-2xl text-sm font-bold shadow-md shadow-brand-green/20 transition flex items-center justify-center gap-2">
+              <span>🥖</span> Share Surplus Food
+            </button>
+            <button onclick="navigateTo('receiver')" class="bg-white hover:bg-brand-border/40 text-brand-charcoal border border-brand-border px-6 py-3.5 rounded-2xl text-sm font-bold transition flex items-center justify-center gap-2">
+              <span>📍</span> Find Food Nearby
+            </button>
+          </div>
+        </div>
+        <div class="w-full lg:w-96 bg-brand-greenLight/60 rounded-3xl p-6 border border-brand-green/20 flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-brand-green uppercase tracking-wider">Live Platform Status</span>
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-brand-accent animate-pulse"></span>
+          </div>
+          <div class="bg-white rounded-2xl p-4 shadow-xs border border-brand-border flex items-center gap-3.5">
+            <div class="text-3xl">🍲</div>
+            <div>
+              <div class="text-xs text-brand-muted font-medium">Next Pickup Available</div>
+              <div class="text-sm font-bold text-brand-charcoal">Fresh Pasta Trays (25 meals)</div>
+              <div class="text-[11px] text-brand-amber font-semibold">Ready in 30 mins • 0.8 mi</div>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl p-4 shadow-xs border border-brand-border flex items-center gap-3.5">
+            <div class="text-3xl">🍞</div>
+            <div>
+              <div class="text-xs text-brand-muted font-medium">Just Claimed</div>
+              <div class="text-sm font-bold text-brand-charcoal">30 Artisan Sourdoughs</div>
+              <div class="text-[11px] text-brand-green font-semibold">Claimed by Hope Haven Shelter</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Impact Stats Bar -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-xs text-center">
+          <div class="text-2xl sm:text-3xl font-extrabold text-brand-green" id="stat-meals">14,842</div>
+          <div class="text-xs font-medium text-brand-muted mt-1">Meals Shared</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-xs text-center">
+          <div class="text-2xl sm:text-3xl font-extrabold text-brand-charcoal" id="stat-kg">6,245 kg</div>
+          <div class="text-xs font-medium text-brand-muted mt-1">Food Rescued</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-xs text-center">
+          <div class="text-2xl sm:text-3xl font-extrabold text-brand-green">185</div>
+          <div class="text-xs font-medium text-brand-muted mt-1">Partner Shelters</div>
+        </div>
+        <div class="bg-white rounded-2xl p-5 border border-brand-border shadow-xs text-center">
+          <div class="text-2xl sm:text-3xl font-extrabold text-brand-charcoal">15.6 tons</div>
+          <div class="text-xs font-medium text-brand-muted mt-1">CO₂ Prevented</div>
+        </div>
+      </div>
+
+      <!-- How It Works Simple Steps -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-brand-border">
+        <div class="text-center max-w-md mx-auto mb-8">
+          <h2 class="text-xl sm:text-2xl font-bold text-brand-charcoal">How ShareBite Works</h2>
+          <p class="text-xs sm:text-sm text-brand-muted mt-1">Simple, quick, and built for fast neighborhood handoffs.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-brand-cream/60 rounded-2xl p-5 border border-brand-border space-y-2">
+            <div class="w-10 h-10 rounded-xl bg-brand-greenLight text-brand-green flex items-center justify-center font-bold text-lg">1</div>
+            <h3 class="text-sm font-bold text-brand-charcoal">Donors Post in 60s</h3>
+            <p class="text-xs text-brand-muted leading-relaxed">Restaurants, delis, or groceries list leftover food, quantity, and preferred pickup window.</p>
+          </div>
+          <div class="bg-brand-cream/60 rounded-2xl p-5 border border-brand-border space-y-2">
+            <div class="w-10 h-10 rounded-xl bg-brand-amberLight text-brand-amber flex items-center justify-center font-bold text-lg">2</div>
+            <h3 class="text-sm font-bold text-brand-charcoal">Shelters Claim It</h3>
+            <p class="text-xs text-brand-muted leading-relaxed">Community organizations browse nearby meals and claim what fits their daily meal plan.</p>
+          </div>
+          <div class="bg-brand-cream/60 rounded-2xl p-5 border border-brand-border space-y-2">
+            <div class="w-10 h-10 rounded-xl bg-brand-greenLight text-brand-green flex items-center justify-center font-bold text-lg">3</div>
+            <h3 class="text-sm font-bold text-brand-charcoal">Pickup & Feed</h3>
+            <p class="text-xs text-brand-muted leading-relaxed">Volunteers coordinate swift pickup with a 4-digit code. Zero food wasted, immediate impact.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-donor" class="screen-view hidden fade-enter space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-greenLight text-brand-green text-xs font-semibold">
+            <span>🏪</span> Green Olive Deli & Bakery
+          </div>
+          <h2 class="text-2xl font-extrabold text-brand-charcoal mt-1">Donor Surplus Dashboard</h2>
+          <p class="text-xs text-brand-muted">Manage your active surplus listings and review pickup statuses.</p>
+        </div>
+        <button onclick="navigateTo('post')" class="bg-brand-green hover:bg-brand-greenHover text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm transition flex items-center justify-center gap-2">
+          <span>+</span> Post Surplus Food
+        </button>
+      </div>
+
+      <!-- Quick Donor Stat Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="bg-white rounded-2xl p-4 border border-brand-border flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-greenLight text-brand-green flex items-center justify-center text-lg font-bold">📦</div>
+          <div>
+            <div class="text-xs text-brand-muted">Active Listings</div>
+            <div class="text-lg font-bold text-brand-charcoal" id="donor-active-count">3</div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-brand-border flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-amberLight text-brand-amber flex items-center justify-center text-lg font-bold">🚚</div>
+          <div>
+            <div class="text-xs text-brand-muted">In-Transit Pickups</div>
+            <div class="text-lg font-bold text-brand-charcoal" id="donor-transit-count">1</div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-brand-border flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-greenLight text-brand-green flex items-center justify-center text-lg font-bold">🌱</div>
+          <div>
+            <div class="text-xs text-brand-muted">Meals Donated This Month</div>
+            <div class="text-lg font-bold text-brand-green">420 meals</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Listings Table / Cards -->
+      <div class="bg-white rounded-3xl p-5 border border-brand-border shadow-xs space-y-4">
+        <div class="flex items-center justify-between border-b border-brand-border pb-3">
+          <h3 class="text-sm font-bold text-brand-charcoal">Your Active Surplus Batches</h3>
+          <span class="text-xs text-brand-muted">Auto-updates in real time</span>
+        </div>
+        <div id="donorListingsContainer" class="space-y-3">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-post" class="screen-view hidden fade-enter max-w-2xl mx-auto space-y-6">
+      <div class="flex items-center gap-3">
+        <button onclick="navigateTo('donor')" class="p-2 rounded-xl bg-white border border-brand-border hover:bg-brand-border/40 text-brand-muted transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <div>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-brand-charcoal">Post Surplus Food</h2>
+          <p class="text-xs text-brand-muted">List surplus items in under 60 seconds to notify nearby partners.</p>
+        </div>
+      </div>
+
+      <form id="postFoodForm" onsubmit="handlePostSubmit(event)" class="bg-white rounded-3xl p-6 sm:p-8 border border-brand-border shadow-xs space-y-5">
+        <!-- Food Title -->
+        <div>
+          <label class="block text-xs font-bold text-brand-charcoal mb-1.5">Food Name & Item Description *</label>
+          <input type="text" id="foodName" required placeholder="e.g., 25 Artisanal Sourdough Loaves & Croissants" class="w-full bg-brand-cream/60 border border-brand-border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30">
+        </div>
+
+        <!-- Category & Icon -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-brand-charcoal mb-1.5">Category *</label>
+            <select id="foodCategory" required class="w-full bg-brand-cream/60 border border-brand-border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30">
+              <option value="Bakery">🥖 Bakery & Bread</option>
+              <option value="Prepared Meals">🍱 Hot / Prepared Meals</option>
+              <option value="Fresh Produce">🥗 Fresh Produce & Fruits</option>
+              <option value="Dairy & Chilled">🥛 Dairy & Chilled Foods</option>
+              <option value="Pantry Staples">🥫 Dry Pantry Goods</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-brand-charcoal mb-1.5">Quantity / Portions *</label>
+            <input type="text" id="foodQuantity" required placeholder="e.g., 30 portions / 4 boxes" class="w-full bg-brand-cream/60 border border-brand-border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30">
+          </div>
+        </div>
+
+        <!-- Quick Pickup Presets -->
+        <div>
+          <label class="block text-xs font-bold text-brand-charcoal mb-1.5">Pickup Deadline *</label>
+          <div class="grid grid-cols-3 gap-2 mb-2">
+            <button type="button" onclick="setDeadlinePreset('Today by 5:00 PM')" class="deadline-btn py-1.5 px-2 text-center text-[11px] font-semibold rounded-lg border border-brand-border bg-brand-cream hover:bg-brand-greenLight transition">Today 5 PM</button>
+            <button type="button" onclick="setDeadlinePreset('Today by 7:30 PM (Closing)')" class="deadline-btn py-1.5 px-2 text-center text-[11px] font-semibold rounded-lg border border-brand-border bg-brand-cream hover:bg-brand-greenLight transition">Closing (7:30 PM)</button>
+            <button type="button" onclick="setDeadlinePreset('Tomorrow by 9:00 AM')" class="deadline-btn py-1.5 px-2 text-center text-[11px] font-semibold rounded-lg border border-brand-border bg-brand-cream hover:bg-brand-greenLight transition">Tomorrow 9 AM</button>
+          </div>
+          <input type="text" id="foodDeadline" required placeholder="e.g., Today by 6:00 PM before kitchen close" class="w-full bg-brand-cream/60 border border-brand-border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30">
+        </div>
+
+        <!-- Address -->
+        <div>
+          <label class="block text-xs font-bold text-brand-charcoal mb-1.5">Pickup Address & Handshake Notes *</label>
+          <input type="text" id="foodAddress" required value="428 Elm Street, Downtown (Kitchen back entrance via lane)" class="w-full bg-brand-cream/60 border border-brand-border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30">
+        </div>
+
+        <!-- Storage & Allergens -->
+        <div>
+          <label class="block text-xs font-bold text-brand-charcoal mb-1.5">Handling / Allergen Notes (Optional)</label>
+          <textarea id="foodNotes" rows="2" placeholder="e.g., Contains gluten & dairy. Please bring insulated bag." class="w-full bg-brand-cream/60 border border-brand-border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-3">
+          <button type="button" onclick="navigateTo('donor')" class="px-4 py-2.5 rounded-xl border border-brand-border text-xs font-bold text-brand-charcoal hover:bg-brand-border/30 transition">
+            Cancel
+          </button>
+          <button type="submit" class="bg-brand-green hover:bg-brand-greenHover text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-brand-green/20 transition flex items-center gap-2">
+            <span>🚀</span> Post Listing
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section id="screen-receiver" class="screen-view hidden fade-enter space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-amberLight text-brand-amber text-xs font-semibold">
+            <span>🏢</span> Hope Haven Community Kitchen
+          </div>
+          <h2 class="text-2xl font-extrabold text-brand-charcoal mt-1">Available Surplus Food Nearby</h2>
+          <p class="text-xs text-brand-muted">Claim meals to feed community members and prevent edible food waste.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="filterUrgentOnly()" id="urgentFilterBtn" class="px-3 py-2 rounded-xl text-xs font-bold border border-brand-border bg-white text-brand-charcoal hover:bg-brand-cream transition flex items-center gap-1.5">
+            <span>⚡</span> Urgent Pickups Only
+          </button>
+        </div>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="bg-white rounded-2xl p-3 border border-brand-border flex flex-col sm:flex-row items-center gap-3">
+        <div class="relative w-full sm:flex-grow">
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-muted text-xs">🔍</span>
+          <input type="text" id="searchInput" oninput="handleSearchFilter()" placeholder="Search by food name, bakery, or allergen..." class="w-full bg-brand-cream/60 border border-brand-border rounded-xl pl-9 pr-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-green/30">
+        </div>
+        <!-- Category Filter Pills -->
+        <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto custom-scrollbar pb-1 sm:pb-0">
+          <button onclick="setCategoryFilter('All')" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-bold transition bg-brand-green text-white" data-cat="All">All</button>
+          <button onclick="setCategoryFilter('Bakery')" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-bold transition bg-brand-cream text-brand-charcoal hover:bg-brand-border/40" data-cat="Bakery">Bakery</button>
+          <button onclick="setCategoryFilter('Prepared Meals')" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-bold transition bg-brand-cream text-brand-charcoal hover:bg-brand-border/40" data-cat="Prepared Meals">Prepared</button>
+          <button onclick="setCategoryFilter('Fresh Produce')" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-bold transition bg-brand-cream text-brand-charcoal hover:bg-brand-border/40" data-cat="Fresh Produce">Produce</button>
+          <button onclick="setCategoryFilter('Dairy & Chilled')" class="cat-pill px-3 py-1.5 rounded-xl text-xs font-bold transition bg-brand-cream text-brand-charcoal hover:bg-brand-border/40" data-cat="Dairy & Chilled">Dairy</button>
+        </div>
+      </div>
+
+      <!-- Listings Grid -->
+      <div id="receiverListingsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <div id="claimModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl max-w-lg w-full border border-brand-border shadow-2xl p-6 sm:p-7 space-y-5 fade-enter relative">
+        <button onclick="closeClaimModal()" class="absolute right-5 top-5 text-brand-muted hover:text-brand-charcoal text-lg font-bold">✕</button>
+
+        <div id="claimModalContent">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <section id="screen-tracker" class="screen-view hidden fade-enter max-w-3xl mx-auto space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-brand-green bg-brand-greenLight px-2.5 py-1 rounded-full">Live Pickup Handshake</span>
+          <h2 class="text-2xl font-extrabold text-brand-charcoal mt-1">Order Progress Tracker</h2>
+          <p class="text-xs text-brand-muted">Track the surplus handoff step-by-step between donor and receiver.</p>
+        </div>
+        <div class="text-right">
+          <span class="text-xs text-brand-muted font-medium">Claim Code</span>
+          <div id="trackerCode" class="text-base font-extrabold text-brand-green">#SB-4821</div>
+        </div>
+      </div>
+
+      <!-- Stepper Visual -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-brand-border shadow-xs space-y-8">
+        <!-- Step Indicators -->
+        <div class="relative flex items-center justify-between">
+          <div class="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-1 bg-brand-border -z-0"></div>
+          <div id="trackerProgressBar" class="absolute left-6 top-1/2 -translate-y-1/2 h-1 bg-brand-green -z-0 transition-all duration-500" style="width: 33%;"></div>
+
+          <!-- Step 1 -->
+          <div class="step-node flex flex-col items-center gap-1.5 z-10" data-step="1">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs bg-brand-green text-white shadow-sm">✓</div>
+            <span class="text-[11px] font-bold text-brand-charcoal">Available</span>
+          </div>
+          <!-- Step 2 -->
+          <div class="step-node flex flex-col items-center gap-1.5 z-10" data-step="2">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs bg-brand-green text-white shadow-sm ring-4 ring-brand-greenLight">2</div>
+            <span class="text-[11px] font-bold text-brand-charcoal">Claimed</span>
+          </div>
+          <!-- Step 3 -->
+          <div class="step-node flex flex-col items-center gap-1.5 z-10" data-step="3">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs bg-brand-border text-brand-muted">3</div>
+            <span class="text-[11px] font-medium text-brand-muted">Picked Up</span>
+          </div>
+          <!-- Step 4 -->
+          <div class="step-node flex flex-col items-center gap-1.5 z-10" data-step="4">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs bg-brand-border text-brand-muted">4</div>
+            <span class="text-[11px] font-medium text-brand-muted">Delivered</span>
+          </div>
+        </div>
+
+        <!-- Current Status Detail Card -->
+        <div id="trackerStatusCard" class="bg-brand-cream/80 rounded-2xl p-5 border border-brand-border flex items-start gap-4">
+          <div class="text-3xl" id="trackerEmoji">🚗</div>
+          <div class="space-y-1">
+            <div class="text-xs font-bold uppercase tracking-wider text-brand-green" id="trackerStateTitle">Status: Claimed by Hope Haven</div>
+            <div class="text-sm font-semibold text-brand-charcoal" id="trackerItemName">30 Artisanal Sourdough & Bagels</div>
+            <p class="text-xs text-brand-muted" id="trackerStateDesc">Volunteer driver Marco Silva has reserved this surplus. Pickup expected by 7:30 PM.</p>
+          </div>
+        </div>
+
+        <!-- Handshake Detail Summary -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div class="p-3.5 bg-brand-cream/40 rounded-xl border border-brand-border space-y-1">
+            <span class="text-brand-muted font-medium">Pickup Location:</span>
+            <div class="font-bold text-brand-charcoal" id="trackerAddress">428 Elm Street, Downtown</div>
+            <span class="text-brand-muted text-[11px]">Green Olive Bakery • Back Lane</span>
+          </div>
+          <div class="p-3.5 bg-brand-cream/40 rounded-xl border border-brand-border space-y-1">
+            <span class="text-brand-muted font-medium">Destination Kitchen:</span>
+            <div class="font-bold text-brand-charcoal">Hope Haven Shelter</div>
+            <span class="text-brand-muted text-[11px]">105 River Park Road</span>
+          </div>
+        </div>
+
+        <!-- Status Advancement Controls -->
+        <div class="pt-4 border-t border-brand-border flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="text-xs text-brand-muted">Simulate real-time driver progress:</div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button onclick="advanceTrackerStatus()" id="advanceStatusBtn" class="flex-1 sm:flex-initial bg-brand-green hover:bg-brand-greenHover text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-sm">
+              Mark as Picked Up ➔
+            </button>
+            <button onclick="resetTrackerDemo()" class="px-3 py-2.5 rounded-xl text-xs font-bold text-brand-muted hover:text-brand-charcoal border border-brand-border bg-white transition">
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-impact" class="screen-view hidden fade-enter space-y-8">
+      <div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-brand-green bg-brand-greenLight px-2.5 py-1 rounded-full">Community Collective</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-charcoal mt-1">Our Collective Impact</h2>
+        <p class="text-xs sm:text-sm text-brand-muted">Transparent tracking of food diverted from landfills and community meals provided.</p>
+      </div>
+
+      <!-- Main Dynamic Stats -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-xs space-y-1">
+          <span class="text-2xl">🍲</span>
+          <div class="text-3xl font-extrabold text-brand-green mt-2" id="impactMeals">14,842</div>
+          <div class="text-xs font-bold text-brand-charcoal">Nutritious Meals Served</div>
+          <p class="text-[11px] text-brand-muted">Fresh surplus meals shared across 185 regional shelter kitchens.</p>
+        </div>
+        <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-xs space-y-1">
+          <span class="text-2xl">⚖️</span>
+          <div class="text-3xl font-extrabold text-brand-charcoal mt-2" id="impactKg">6,245 kg</div>
+          <div class="text-xs font-bold text-brand-charcoal">Food Saved From Waste</div>
+          <p class="text-[11px] text-brand-muted">Equivalent to over 13,767 lbs of clean, high-quality edible groceries.</p>
+        </div>
+        <div class="bg-white rounded-3xl p-6 border border-brand-border shadow-xs space-y-1">
+          <span class="text-2xl">🌍</span>
+          <div class="text-3xl font-extrabold text-brand-green mt-2" id="impactCo2">15.6 tons</div>
+          <div class="text-xs font-bold text-brand-charcoal">CO₂ Emissions Prevented</div>
+          <p class="text-[11px] text-brand-muted">Methane prevented by keeping surplus food out of municipal landfills.</p>
+        </div>
+      </div>
+
+      <!-- Visual Lightweight Bar Chart (CSS/SVG) -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-brand-border shadow-xs space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-brand-charcoal">Meals Rescued This Week</h3>
+            <p class="text-xs text-brand-muted">Daily distribution across metropolitan shelters</p>
+          </div>
+          <span class="text-xs font-semibold text-brand-green bg-brand-greenLight px-3 py-1 rounded-full">+18% vs last week</span>
+        </div>
+
+        <!-- Bar Visual -->
+        <div class="h-44 flex items-end justify-between gap-2 sm:gap-6 pt-6 px-2 border-b border-brand-border">
+          <div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+            <span class="text-[10px] font-bold text-brand-muted group-hover:text-brand-green">210</span>
+            <div class="w-full max-w-[42px] bg-brand-green/30 hover:bg-brand-green rounded-t-xl transition-all duration-300" style="height: 52%;"></div>
+            <span class="text-[11px] font-medium text-brand-muted">Mon</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+            <span class="text-[10px] font-bold text-brand-muted group-hover:text-brand-green">320</span>
+            <div class="w-full max-w-[42px] bg-brand-green/40 hover:bg-brand-green rounded-t-xl transition-all duration-300" style="height: 75%;"></div>
+            <span class="text-[11px] font-medium text-brand-muted">Tue</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+            <span class="text-[10px] font-bold text-brand-muted group-hover:text-brand-green">260</span>
+            <div class="w-full max-w-[42px] bg-brand-green/40 hover:bg-brand-green rounded-t-xl transition-all duration-300" style="height: 60%;"></div>
+            <span class="text-[11px] font-medium text-brand-muted">Wed</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+            <span class="text-[10px] font-bold text-brand-muted group-hover:text-brand-green">190</span>
+            <div class="w-full max-w-[42px] bg-brand-green/30 hover:bg-brand-green rounded-t-xl transition-all duration-300" style="height: 44%;"></div>
+            <span class="text-[11px] font-medium text-brand-muted">Thu</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+            <span class="text-[10px] font-bold text-brand-muted group-hover:text-brand-green">380</span>
+            <div class="w-full max-w-[42px] bg-brand-green/60 hover:bg-brand-green rounded-t-xl transition-all duration-300" style="height: 88%;"></div>
+            <span class="text-[11px] font-medium text-brand-muted">Fri</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+            <span class="text-[10px] font-bold text-brand-muted group-hover:text-brand-green">410</span>
+            <div class="w-full max-w-[42px] bg-brand-green rounded-t-xl transition-all duration-300 shadow-sm shadow-brand-green/30" style="height: 98%;"></div>
+            <span class="text-[11px] font-bold text-brand-charcoal">Sat</span>
+          </div>
+          <div class="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+            <span class="text-[10px] font-bold text-brand-muted group-hover:text-brand-green">340</span>
+            <div class="w-full max-w-[42px] bg-brand-green/50 hover:bg-brand-green rounded-t-xl transition-all duration-300" style="height: 80%;"></div>
+            <span class="text-[11px] font-medium text-brand-muted">Sun</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Completed Rescues -->
+      <div class="bg-white rounded-3xl p-6 border border-brand-border space-y-4">
+        <h3 class="text-sm font-bold text-brand-charcoal">Recent Completed Rescues</h3>
+        <div class="space-y-2.5" id="recentRescuesContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-brand-border px-3 py-2 flex items-center justify-around">
+    <button onclick="navigateTo('landing')" data-nav="landing" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-brand-charcoal">
+      <span class="text-lg">🏠</span>
+      <span class="text-[10px] font-semibold">Home</span>
+    </button>
+    <button onclick="navigateTo('donor')" data-nav="donor" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-brand-muted">
+      <span class="text-lg">🏪</span>
+      <span class="text-[10px] font-semibold">Donor</span>
+    </button>
+    <button onclick="navigateTo('post')" data-nav="post" class="flex flex-col items-center -mt-4">
+      <div class="w-11 h-11 rounded-full bg-brand-green text-white flex items-center justify-center text-lg font-bold shadow-md shadow-brand-green/30">
+        +
+      </div>
+      <span class="text-[10px] font-bold text-brand-green mt-0.5">Post</span>
+    </button>
+    <button onclick="navigateTo('receiver')" data-nav="receiver" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-brand-muted">
+      <span class="text-lg">🥗</span>
+      <span class="text-[10px] font-semibold">Browse</span>
+    </button>
+    <button onclick="navigateTo('tracker')" data-nav="tracker" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-brand-muted">
+      <span class="text-lg">🚚</span>
+      <span class="text-[10px] font-semibold">Tracker</span>
+    </button>
+    <button onclick="navigateTo('impact')" data-nav="impact" class="mobile-nav-btn flex flex-col items-center gap-0.5 text-brand-muted">
+      <span class="text-lg">📊</span>
+      <span class="text-[10px] font-semibold">Impact</span>
+    </button>
+  </div>
+
+  <script>
+    // Initial Reactive Mock State
+    const state = {
+      currentScreen: 'landing',
+      selectedCategory: 'All',
+      urgentOnly: false,
+      searchQuery: '',
+      trackerStep: 2, // 1: Available, 2: Claimed, 3: Picked Up, 4: Delivered
+      metrics: {
+        mealsRescued: 14842,
+        kgSaved: 6245,
+        co2Tons: 15.6
+      },
+      listings: [
+        {
+          id: 'sb-101',
+          name: '30 Artisanal Sourdough & Bagels',
+          category: 'Bakery',
+          quantity: '30 loaves & bagels (~40 servings)',
+          donorName: 'Green Olive Deli & Bakery',
+          distance: '0.4 miles away',
+          deadline: 'Today by 7:30 PM (Closing)',
+          urgent: true,
+          address: '428 Elm Street, Downtown (Kitchen back entrance via lane)',
+          notes: 'Contains wheat & sesame. Freshly baked at 6 AM today. Packed in clean cardboard bakery boxes.',
+          icon: '🥖',
+          status: 'CLAIMED',
+          claimCode: '#SB-4821',
+          volunteer: 'Marco Silva (Driver)'
+        },
+        {
+          id: 'sb-102',
+          name: '25 Hot Pasta Primavera & Garlic Bread',
+          category: 'Prepared Meals',
+          quantity: '25 meal trays (~25 servings)',
+          donorName: 'Trattoria Bella',
+          distance: '0.8 miles away',
+          deadline: 'Within 2 Hours (Today 5:00 PM)',
+          urgent: true,
+          address: '112 Pine Street, Suite 4',
+          notes: 'Vegetarian. Kept warm in catering chaffing trays. Ready to serve immediately.',
+          icon: '🍱',
+          status: 'AVAILABLE',
+          claimCode: null,
+          volunteer: null
+        },
+        {
+          id: 'sb-103',
+          name: '5 Crates Crisp Organic Apples & Kale',
+          category: 'Fresh Produce',
+          quantity: '5 crates (~60 lbs produce)',
+          donorName: 'FreshFields Grocers',
+          distance: '1.2 miles away',
+          deadline: 'Tomorrow by 9:00 AM',
+          urgent: false,
+          address: '890 Market Boulevard',
+          notes: 'Farm-fresh surplus. Perfect condition, slight visual blemishes.',
+          icon: '🥗',
+          status: 'AVAILABLE',
+          claimCode: null,
+          volunteer: null
+        },
+        {
+          id: 'sb-104',
+          name: '40 Greek Yogurts & Oat Milk Cartons',
+          category: 'Dairy & Chilled',
+          quantity: '40 individual units',
+          donorName: 'Corner Dairy Mart',
+          distance: '1.5 miles away',
+          deadline: 'Today by 6:00 PM',
+          urgent: false,
+          address: '304 Oak Avenue',
+          notes: 'Refrigeration required during transport. Best-by date is in 4 days.',
+          icon: '🥛',
+          status: 'AVAILABLE',
+          claimCode: null,
+          volunteer: null
+        }
+      ],
+      recentRescues: [
+        { item: '40 Fresh Sandwiches & wraps', donor: 'Corner Deli', receiver: 'St. Jude Shelter', time: '20 mins ago' },
+        { item: '18 Boxes organic berries & apples', donor: 'Harbor Grocers', receiver: 'Harbor Family Center', time: '1 hour ago' },
+        { item: '25 Hot Roasted Veggie Bowls', donor: 'Bistro Verde', receiver: 'Downtown Outreach', time: '3 hours ago' }
+      ]
+    };
+
+    function navigateTo(screenId) {
+      state.currentScreen = screenId;
+      document.querySelectorAll('.screen-view').forEach(el => el.classList.add('hidden'));
+
+      const target = document.getElementById(`screen-${screenId}`);
+      if (target) {
+        target.classList.remove('hidden');
+      }
+
+      // Update Desktop Nav styles
+      document.querySelectorAll('.nav-link').forEach(btn => {
+        if (btn.dataset.nav === screenId) {
+          btn.classList.add('bg-white', 'text-brand-green', 'shadow-xs');
+          btn.classList.remove('text-brand-charcoal');
+        } else {
+          btn.classList.remove('bg-white', 'text-brand-green', 'shadow-xs');
+          btn.classList.add('text-brand-charcoal');
+        }
+      });
+
+      // Update Mobile Nav styles
+      document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+        if (btn.dataset.nav === screenId) {
+          btn.classList.add('text-brand-green');
+          btn.classList.remove('text-brand-muted');
+        } else {
+          btn.classList.remove('text-brand-green');
+          btn.classList.add('text-brand-muted');
+        }
+      });
+
+      // Specific view refreshes
+      if (screenId === 'donor') renderDonorListings();
+      if (screenId === 'receiver') renderReceiverListings();
+      if (screenId === 'tracker') updateTrackerUI();
+      if (screenId === 'impact') renderImpactView();
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderDonorListings() {
+      const container = document.getElementById('donorListingsContainer');
+      const activeCountEl = document.getElementById('donor-active-count');
+      const transitCountEl = document.getElementById('donor-transit-count');
+
+      const active = state.listings.filter(item => item.status === 'AVAILABLE');
+      const inTransit = state.listings.filter(item => item.status === 'CLAIMED' || item.status === 'PICKED_UP');
+
+      activeCountEl.innerText = active.length;
+      transitCountEl.innerText = inTransit.length;
+
+      container.innerHTML = state.listings.map(item => {
+        let badgeColor = 'bg-brand-greenLight text-brand-green border-brand-green/30';
+        if (item.status === 'CLAIMED') badgeColor = 'bg-brand-amberLight text-brand-amber border-brand-amber/30';
+        if (item.status === 'PICKED_UP') badgeColor = 'bg-blue-50 text-blue-700 border-blue-200';
+        if (item.status === 'DELIVERED') badgeColor = 'bg-gray-100 text-gray-700 border-gray-200';
+
+        return `
+          <div class="p-4 rounded-2xl border border-brand-border bg-brand-cream/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-start gap-3">
+              <span class="text-2xl sm:text-3xl p-2 bg-white rounded-xl border border-brand-border">${item.icon}</span>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h4 class="text-sm font-bold text-brand-charcoal">${item.name}</h4>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}">${item.status}</span>
+                </div>
+                <div class="text-xs text-brand-muted mt-0.5">Quantity: <span class="font-semibold text-brand-charcoal">${item.quantity}</span> • Deadline: <span class="font-semibold text-brand-amber">${item.deadline}</span></div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 self-end sm:self-center">
+              ${item.status === 'CLAIMED' || item.status === 'PICKED_UP' ? `
+                <button onclick="navigateTo('tracker')" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-brand-amberLight text-brand-amber hover:bg-brand-amber hover:text-white transition">
+                  Track Pickup
+                </button>
+              ` : `
+                <button onclick="deleteListing('${item.id}')" class="text-xs font-medium text-brand-muted hover:text-red-600 px-2 py-1">
+                  Remove
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Delete listing helper
+    function deleteListing(id) {
+      state.listings = state.listings.filter(i => i.id !== id);
+      renderDonorListings();
+      showToast('Surplus listing removed.');
+    }
+
+    function setDeadlinePreset(text) {
+      document.getElementById('foodDeadline').value = text;
+    }
+
+    function handlePostSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('foodName').value.trim();
+      const category = document.getElementById('foodCategory').value;
+      const quantity = document.getElementById('foodQuantity').value.trim();
+      const deadline = document.getElementById('foodDeadline').value.trim();
+      const address = document.getElementById('foodAddress').value.trim();
+      const notes = document.getElementById('foodNotes').value.trim();
+
+      const iconMap = {
+        'Bakery': '🥖',
+        'Prepared Meals': '🍱',
+        'Fresh Produce': '🥗',
+        'Dairy & Chilled': '🥛',
+        'Pantry Staples': '🥫'
+      };
+
+      const newListing = {
+        id: 'sb-' + Date.now().toString().slice(-4),
+        name,
+        category,
+        quantity,
+        donorName: 'Green Olive Deli & Bakery',
+        distance: '0.2 miles away',
+        deadline,
+        urgent: deadline.toLowerCase().includes('2 hour') || deadline.toLowerCase().includes('5:00'),
+        address,
+        notes: notes || 'Carefully packed by donor staff. Ready for direct handover.',
+        icon: iconMap[category] || '📦',
+        status: 'AVAILABLE',
+        claimCode: null,
+        volunteer: null
+      };
+
+      state.listings.unshift(newListing);
+      document.getElementById('postFoodForm').reset();
+      showToast('🎉 Surplus listing posted! Nearby shelters have been notified.');
+      navigateTo('donor');
+    }
+
+    function setCategoryFilter(cat) {
+      state.selectedCategory = cat;
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.classList.add('bg-brand-green', 'text-white');
+          btn.classList.remove('bg-brand-cream', 'text-brand-charcoal');
+        } else {
+          btn.classList.remove('bg-brand-green', 'text-white');
+          btn.classList.add('bg-brand-cream', 'text-brand-charcoal');
+        }
+      });
+      renderReceiverListings();
+    }
+
+    function filterUrgentOnly() {
+      state.urgentOnly = !state.urgentOnly;
+      const btn = document.getElementById('urgentFilterBtn');
+      if (state.urgentOnly) {
+        btn.classList.add('bg-brand-amber', 'text-white', 'border-brand-amber');
+        btn.classList.remove('bg-white', 'text-brand-charcoal');
+      } else {
+        btn.classList.remove('bg-brand-amber', 'text-white', 'border-brand-amber');
+        btn.classList.add('bg-white', 'text-brand-charcoal');
+      }
+      renderReceiverListings();
+    }
+
+    function handleSearchFilter() {
+      state.searchQuery = document.getElementById('searchInput').value.toLowerCase();
+      renderReceiverListings();
+    }
+
+    function renderReceiverListings() {
+      const grid = document.getElementById('receiverListingsGrid');
+
+      let filtered = state.listings.filter(i => i.status === 'AVAILABLE');
+
+      if (state.selectedCategory !== 'All') {
+        filtered = filtered.filter(i => i.category === state.selectedCategory);
+      }
+
+      if (state.urgentOnly) {
+        filtered = filtered.filter(i => i.urgent);
+      }
+
+      if (state.searchQuery) {
+        filtered = filtered.filter(i => 
+          i.name.toLowerCase().includes(state.searchQuery) ||
+          i.donorName.toLowerCase().includes(state.searchQuery) ||
+          i.notes.toLowerCase().includes(state.searchQuery)
+        );
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center bg-white rounded-3xl border border-brand-border p-8">
+            <span class="text-4xl">🌾</span>
+            <h3 class="text-base font-bold text-brand-charcoal mt-2">No surplus listings match your filter</h3>
+            <p class="text-xs text-brand-muted mt-1">Try resetting the category pills or search query.</p>
+            <button onclick="setCategoryFilter('All')" class="mt-4 px-4 py-2 bg-brand-greenLight text-brand-green rounded-xl text-xs font-bold">Reset Filters</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => `
+        <div class="bg-white rounded-3xl p-5 border border-brand-border shadow-xs hover:shadow-md transition flex flex-col justify-between gap-4">
+          <div class="space-y-3">
+            <div class="flex items-start justify-between gap-2">
+              <span class="text-3xl p-2 bg-brand-cream rounded-2xl border border-brand-border">${item.icon}</span>
+              ${item.urgent ? `<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-brand-amberLight text-brand-amber border border-brand-amber/30">⚡ URGENT PICKUP</span>` : `<span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-brand-greenLight text-brand-green">${item.category}</span>`}
+            </div>
+
+            <div>
+              <h3 class="text-base font-bold text-brand-charcoal line-clamp-1">${item.name}</h3>
+              <p class="text-xs text-brand-muted mt-0.5">${item.donorName} • <span class="font-medium text-brand-charcoal">${item.distance}</span></p>
+            </div>
+
+            <div class="space-y-1.5 bg-brand-cream/60 p-3 rounded-2xl border border-brand-border text-xs">
+              <div class="flex items-center justify-between">
+                <span class="text-brand-muted">Quantity:</span>
+                <span class="font-bold text-brand-charcoal">${item.quantity}</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-brand-muted">Pickup deadline:</span>
+                <span class="font-bold text-brand-amber">${item.deadline}</span>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="openClaimModal('${item.id}')" class="w-full bg-brand-green hover:bg-brand-greenHover text-white py-2.5 rounded-xl text-xs font-bold shadow-xs transition flex items-center justify-center gap-1.5">
+            <span>✨</span> Claim Food
+          </button>
+        </div>
+      `).join('');
+    }
+
+    let currentSelectedId = null;
+
+    function openClaimModal(id) {
+      currentSelectedId = id;
+      const item = state.listings.find(i => i.id === id);
+      if (!item) return;
+
+      const modal = document.getElementById('claimModal');
+      const content = document.getElementById('claimModalContent');
+
+      content.innerHTML = `
+        <div class="flex items-center gap-3">
+          <span class="text-4xl p-2.5 bg-brand-cream rounded-2xl border border-brand-border">${item.icon}</span>
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-brand-green bg-brand-greenLight px-2 py-0.5 rounded-full">${item.category}</span>
+            <h3 class="text-lg font-bold text-brand-charcoal mt-1">${item.name}</h3>
+            <p class="text-xs text-brand-muted">${item.donorName}</p>
+          </div>
+        </div>
+
+        <div class="space-y-2 bg-brand-cream/60 p-4 rounded-2xl border border-brand-border text-xs">
+          <div class="flex justify-between py-0.5 border-b border-brand-border/60">
+            <span class="text-brand-muted">Quantity:</span>
+            <span class="font-bold text-brand-charcoal">${item.quantity}</span>
+          </div>
+          <div class="flex justify-between py-0.5 border-b border-brand-border/60">
+            <span class="text-brand-muted">Pickup Window:</span>
+            <span class="font-bold text-brand-amber">${item.deadline}</span>
+          </div>
+          <div class="py-0.5">
+            <span class="text-brand-muted block mb-0.5">Pickup Location:</span>
+            <span class="font-medium text-brand-charcoal">${item.address}</span>
+          </div>
+          <div class="py-0.5">
+            <span class="text-brand-muted block mb-0.5">Storage & Allergens:</span>
+            <span class="text-brand-charcoal">${item.notes}</span>
+          </div>
+        </div>
+
+        <div class="bg-brand-greenLight/60 p-3.5 rounded-2xl border border-brand-green/20 text-xs text-brand-charcoal flex items-start gap-2.5">
+          <span class="text-lg">🤝</span>
+          <span>By claiming, you commit to picking up this surplus before the deadline to ensure food quality and safety.</span>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <button onclick="closeClaimModal()" class="px-4 py-2.5 rounded-xl border border-brand-border text-xs font-bold text-brand-charcoal hover:bg-brand-border/30 transition">
+            Close
+          </button>
+          <button onclick="confirmClaim()" class="bg-brand-green hover:bg-brand-greenHover text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-brand-green/20 transition">
+            Confirm & Claim This Food
+          </button>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeClaimModal() {
+      document.getElementById('claimModal').classList.add('hidden');
+    }
+
+    function confirmClaim() {
+      const item = state.listings.find(i => i.id === currentSelectedId);
+      if (!item) return;
+
+      item.status = 'CLAIMED';
+      item.claimCode = '#SB-' + Math.floor(1000 + Math.random() * 9000);
+      item.volunteer = 'Marco Silva';
+
+      // Update Tracker state to step 2
+      state.trackerStep = 2;
+
+      const content = document.getElementById('claimModalContent');
+      content.innerHTML = `
+        <div class="text-center py-4 space-y-4">
+          <div class="w-14 h-14 bg-brand-greenLight text-brand-green rounded-full flex items-center justify-center text-2xl mx-auto shadow-sm">
+            ✓
+          </div>
+          <div>
+            <h3 class="text-xl font-extrabold text-brand-charcoal">Food Successfully Claimed!</h3>
+            <p class="text-xs text-brand-muted mt-1">Show this 4-digit code to the donor upon pickup handover.</p>
+          </div>
+
+          <div class="bg-brand-cream border-2 border-dashed border-brand-green rounded-2xl p-4 max-w-xs mx-auto">
+            <span class="text-[11px] font-bold uppercase text-brand-muted tracking-wider">Pickup Claim Code</span>
+            <div class="text-3xl font-black text-brand-green tracking-wider mt-0.5">${item.claimCode}</div>
+          </div>
+
+          <div class="text-left bg-brand-cream/60 p-3.5 rounded-2xl border border-brand-border text-xs space-y-1">
+            <div class="text-brand-muted">Pickup Address:</div>
+            <div class="font-bold text-brand-charcoal">${item.address}</div>
+            <div class="text-brand-amber font-semibold mt-1">Must be collected by: ${item.deadline}</div>
+          </div>
+
+          <div class="pt-2 flex items-center justify-center gap-3">
+            <button onclick="closeClaimModal(); navigateTo('tracker');" class="w-full bg-brand-green hover:bg-brand-greenHover text-white py-3 rounded-xl text-xs font-bold transition">
+              Open Live Pickup Tracker ➔
+            </button>
+          </div>
+        </div>
+      `;
+
+      showToast('🎉 Surplus batch claimed! View progress on the Tracker screen.');
+    }
+
+    function updateTrackerUI() {
+      const progressBar = document.getElementById('trackerProgressBar');
+      const emojiEl = document.getElementById('trackerEmoji');
+      const titleEl = document.getElementById('trackerStateTitle');
+      const descEl = document.getElementById('trackerStateDesc');
+      const advanceBtn = document.getElementById('advanceStatusBtn');
+
+      const stepNodes = document.querySelectorAll('.step-node');
+
+      const percentages = ['0%', '33%', '66%', '100%'];
+      progressBar.style.width = percentages[state.trackerStep - 1];
+
+      stepNodes.forEach(node => {
+        const stepNum = parseInt(node.dataset.step, 10);
+        const iconDiv = node.querySelector('div');
+        const label = node.querySelector('span');
+
+        if (stepNum < state.trackerStep) {
+          iconDiv.className = 'w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs bg-brand-green text-white shadow-sm';
+          iconDiv.innerText = '✓';
+          label.className = 'text-[11px] font-bold text-brand-charcoal';
+        } else if (stepNum === state.trackerStep) {
+          iconDiv.className = 'w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs bg-brand-green text-white shadow-sm ring-4 ring-brand-greenLight';
+          iconDiv.innerText = stepNum;
+          label.className = 'text-[11px] font-bold text-brand-green';
+        } else {
+          iconDiv.className = 'w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs bg-brand-border text-brand-muted';
+          iconDiv.innerText = stepNum;
+          label.className = 'text-[11px] font-medium text-brand-muted';
+        }
+      });
+
+      if (state.trackerStep === 1) {
+        emojiEl.innerText = '🥖';
+        titleEl.innerText = 'Status: Surplus Available for Claim';
+        descEl.innerText = 'Surplus batch is posted and awaiting pickup reservation by a local community kitchen.';
+        advanceBtn.innerText = 'Simulate Shelter Claim ➔';
+        advanceBtn.classList.remove('hidden');
+      } else if (state.trackerStep === 2) {
+        emojiEl.innerText = '🚗';
+        titleEl.innerText = 'Status: Claimed • En Route to Kitchen';
+        descEl.innerText = 'Volunteer Marco Silva has accepted this pickup and is heading to Green Olive Deli.';
+        advanceBtn.innerText = 'Mark as Picked Up ➔';
+        advanceBtn.classList.remove('hidden');
+      } else if (state.trackerStep === 3) {
+        emojiEl.innerText = '📦';
+        titleEl.innerText = 'Status: Picked Up • Driving to Shelter';
+        descEl.innerText = 'Food inspected and collected from donor kitchen. In transit to Hope Haven Shelter.';
+        advanceBtn.innerText = 'Mark as Delivered ➔';
+        advanceBtn.classList.remove('hidden');
+      } else if (state.trackerStep === 4) {
+        emojiEl.innerText = '🎉';
+        titleEl.innerText = 'Status: Successfully Delivered!';
+        descEl.innerText = 'Handover complete! 30 servings saved and delivered to Hope Haven Shelter. Impact logged.';
+        advanceBtn.innerText = 'View Impact Metrics ➔';
+      }
+    }
+
+    function advanceTrackerStatus() {
+      if (state.trackerStep < 4) {
+        state.trackerStep++;
+        updateTrackerUI();
+
+        if (state.trackerStep === 3) {
+          showToast('📦 Food marked as Picked Up by volunteer driver.');
+        } else if (state.trackerStep === 4) {
+          // Increase live impact stats
+          state.metrics.mealsRescued += 30;
+          state.metrics.kgSaved += 15;
+          state.metrics.co2Tons = parseFloat((state.metrics.co2Tons + 0.04).toFixed(2));
+
+          state.recentRescues.unshift({
+            item: '30 Artisanal Sourdough & Bagels',
+            donor: 'Green Olive Deli',
+            receiver: 'Hope Haven Shelter',
+            time: 'Just now'
+          });
+
+          showToast('🎉 Meal delivery complete! Community impact recorded.');
+        }
+      } else {
+        navigateTo('impact');
+      }
+    }
+
+    function resetTrackerDemo() {
+      state.trackerStep = 2;
+      updateTrackerUI();
+      showToast('Tracker demo reset to step 2 (Claimed).');
+    }
+
+    function renderImpactView() {
+      document.getElementById('impactMeals').innerText = state.metrics.mealsRescued.toLocaleString();
+      document.getElementById('impactKg').innerText = state.metrics.kgSaved.toLocaleString() + ' kg';
+      document.getElementById('impactCo2').innerText = state.metrics.co2Tons.toFixed(1) + ' tons';
+
+      // Also sync landing page numbers
+      document.getElementById('stat-meals').innerText = state.metrics.mealsRescued.toLocaleString();
+      document.getElementById('stat-kg').innerText = state.metrics.kgSaved.toLocaleString() + ' kg';
+
+      const recentContainer = document.getElementById('recentRescuesContainer');
+      recentContainer.innerHTML = state.recentRescues.map(r => `
+        <div class="p-3 bg-brand-cream/60 rounded-2xl border border-brand-border flex items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-xl bg-brand-greenLight text-brand-green flex items-center justify-center font-bold text-sm">🥗</span>
+            <div>
+              <div class="font-bold text-brand-charcoal">${r.item}</div>
+              <div class="text-[11px] text-brand-muted">${r.donor} ➔ <span class="text-brand-green font-semibold">${r.receiver}</span></div>
+            </div>
+          </div>
+          <span class="text-[11px] text-brand-muted font-medium">${r.time}</span>
+        </div>
+      `).join('');
+    }
+
+    // Toast notification utility
+    function showToast(message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'bg-brand-charcoal text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-lg border border-brand-border pointer-events-auto fade-enter flex items-center gap-2';
+      toast.innerHTML = `<span>✨</span><span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Initial boot
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDonorListings();
+      renderReceiverListings();
+      updateTrackerUI();
+      renderImpactView();
+    });
+  </script>
+</body>
+</html>
